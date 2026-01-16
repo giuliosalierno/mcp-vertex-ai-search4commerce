@@ -3,3 +3,12 @@
 
 # Gemini file
 GEMINI.md
+
+# Gemini settings
+.gemini/
+
+# Python cache
+__pycache__/
+
+# Python egg info
+*.egg-info/

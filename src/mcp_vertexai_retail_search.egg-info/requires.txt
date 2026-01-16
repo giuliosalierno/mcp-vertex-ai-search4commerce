@@ -1,3 +1,0 @@
-fastmcp==2.10.4
-python-dotenv
-google-cloud-retail

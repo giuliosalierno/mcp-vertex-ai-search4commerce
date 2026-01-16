@@ -1,8 +1,0 @@
-README.md
-pyproject.toml
-src/server.py
-src/mcp_vertexai_retail_search.egg-info/PKG-INFO
-src/mcp_vertexai_retail_search.egg-info/SOURCES.txt
-src/mcp_vertexai_retail_search.egg-info/dependency_links.txt
-src/mcp_vertexai_retail_search.egg-info/requires.txt
-src/mcp_vertexai_retail_search.egg-info/top_level.txt
