@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "Vertex AI Search for Retail API": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "fastmcp",
+        "fastmcp",
+        "run",
+        "/usr/local/google/home/giuliosalierno/Projects/tradeinn_vaisc/mcp-vertex-ai-retail-search-server/src/server.py"
+      ]
+    }
+  }
+}
