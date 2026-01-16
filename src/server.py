@@ -9,7 +9,8 @@ from fastmcp import FastMCP
 from google.api_core.exceptions import InvalidArgument
 from google.cloud import retail_v2
 
-# 1. Ensure .env is loaded from the script's actual directory
+# 1. 
+# Ensure .env is loaded from the script's actual directory
 # ADK runs this as a subprocess, so relative paths often fail.
 env_path = Path(__file__).parent.parent / '.env'
 load_dotenv(dotenv_path=env_path)
@@ -32,7 +33,7 @@ SERVING_CONFIG_ID = os.getenv("SERVING_CONFIG_ID", "default_serving_config")
 
 # --- FastMCP Server Setup ---
 mcp = FastMCP(
-    "MCP for Vertex AI search for commerce formlely Retail API")
+    "MCP for Vertex AI Search for Commerce")
 
 @mcp.tool
 def search_products(

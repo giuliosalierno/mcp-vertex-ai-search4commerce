@@ -1,4 +1,4 @@
-# Vertex AI Search for Commerce MCP Server
+# Vertex AI Search for Commerce
 
 This project is a Model Context Protocol (MCP) server example that provides the [Vertex AI Search for Commerce](https://cloud.google.com/solutions/vertex-ai-search-commerce?hl=en) API from Google Cloud as a tool, using [FastMCP](https://github.com/fastmcp/fastmcp-py).
 
@@ -60,28 +60,56 @@ Through this server, an AI agent can search a product catalog using natural lang
 
 ## Running the Server
 
-You can run the Python script directly using `uv`'s execution feature.
+The MCP server can be run in two ways:
 
-```bash
-uv run python src/server.py
-```
+1.  **With `stdio` transport (default)**:
+    The server communicates over standard input/output. This is the default when running the script directly.
+    ```bash
+    uv run python src/server.py
+    ```
 
-### Running the Server (using fastmcp)
+2.  **With `http` transport**:
+    The server communicates over HTTP. This requires using the `fastmcp` command and specifying the transport and port.
+    ```bash
+    fastmcp run src/server.py --transport http --port 9000
+    ```
+    When the server starts successfully, you will see a message like this:
+    ```
+    INFO:     Started server process [12345]
+    INFO:     Waiting for application startup.
+    INFO:     Application startup complete.
+    INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
+    ```
 
-You can also run the server using the CLI provided by the `fastmcp` library. This method automatically finds and runs the `FastMCP` instance.
+## Using the Tool with the ADK
 
-Specify the module path where the `mcp` instance is located. You can use the `--port` option to specify a different port instead of the default (8080).
+To use the `search_products` tool from an AI agent, you can use the [Agent Development Kit (ADK)](https://github.com/google/generative-ai-docs/blob/main/site/en/gemini-api/docs/adk/overview.md).
 
-```bash
-fastmcp run src/server.py --transport http --port 9000
-```
+Here is a minimal example of how to call the tool using the ADK:
 
-When the server starts successfully, you will see a message like this:
-```
-INFO:     Started server process [12345]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
+```python
+from adk.adk import ADK
+from adk.mcp import McpTransport, ProcessTransport, HttpTransport
+
+# 1. Choose the transport based on how you are running the server.
+# transport = ProcessTransport(['uv', 'run', 'python', 'src/server.py']) # For stdio
+# transport = HttpTransport('http://localhost:9000') # For http to be tested
+
+# 2. Initialize the ADK with the chosen transport.
+adk = ADK(mcp_transport=transport)
+
+# 3. Use the tool.
+async def main():
+    # The ADK will automatically discover the tools from the server.
+    # The tool name is the function name in `src/server.py`.
+    result_stream = adk.tools.search_products(query="shoes", brand="google")
+
+    async for partial_result in result_stream:
+        print(partial_result)
+
+if __name__ == '__main__':
+    import asyncio
+    asyncio.run(main())
 ```
 
 ## Provided Tools
@@ -101,11 +129,6 @@ This MCP server provides the following tool:
     -   `page_size` (int): The number of results to return per page. (Default: 10)
 -   **Returns**: A stream of dictionaries, where each dictionary contains the full details of a found product.
 
----
-
-## Google Cloud Run Deployment Guide
-
-TBD
 ---
 
 ## Reference
