@@ -88,28 +88,30 @@ To use the `search_products` tool from an AI agent, you can use the [Agent Devel
 Here is a minimal example of how to call the tool using the ADK:
 
 ```python
-from adk.adk import ADK
-from adk.mcp import McpTransport, ProcessTransport, HttpTransport
+# 1. Find the path to your venv's python
+venv_python_path = "venv/bin/python"
 
-# 1. Choose the transport based on how you are running the server.
-# transport = ProcessTransport(['uv', 'run', 'python', 'src/server.py']) # For stdio
-# transport = HttpTransport('http://localhost:9000') # For http to be tested
+server_params = StdioServerParameters(
+    command=venv_python_path,  # Use the specific venv python
+    args=[
+        "src/server.py"
+    ],
+)
 
-# 2. Initialize the ADK with the chosen transport.
-adk = ADK(mcp_transport=transport)
+mcp_config = StdioConnectionParams(server_params=server_params, timeout=120)
 
-# 3. Use the tool.
-async def main():
-    # The ADK will automatically discover the tools from the server.
-    # The tool name is the function name in `src/server.py`.
-    result_stream = adk.tools.search_products(query="shoes", brand="google")
+# 2. Create the Toolset from the server
+mcp_tools = MCPToolset(connection_params=mcp_config)
 
-    async for partial_result in result_stream:
-        print(partial_result)
-
-if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main())
+root_agent = LlmAgent(
+    name="root_agent",
+    model=Gemini(
+        model="gemini-2.5-flash",
+        retry_options=types.HttpRetryOptions(attempts=3),
+    ),
+    instruction="You are a retail assistant. You can help users by searching for products and comparing them. Use the available tools to search for products.",
+    tools=[mcp_tools],  # Use the remote tools
+)
 ```
 
 ## Provided Tools
