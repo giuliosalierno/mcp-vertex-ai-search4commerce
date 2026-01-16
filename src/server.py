@@ -9,12 +9,12 @@ from fastmcp import FastMCP
 from google.api_core.exceptions import InvalidArgument
 from google.cloud import retail_v2
 
-# 1. FIX: Ensure .env is loaded from the script's actual directory
+# 1. Ensure .env is loaded from the script's actual directory
 # ADK runs this as a subprocess, so relative paths often fail.
 env_path = Path(__file__).parent.parent / '.env'
 load_dotenv(dotenv_path=env_path)
 
-# 2. FIX: Redirect logs to stderr. 
+# 2. Redirect logs to stderr. 
 # Stdio transport uses stdout for the MCP protocol. 
 # If a logger prints to stdout, the ADK will see it as a "malformed JSON" error.
 logging.basicConfig(
@@ -32,7 +32,7 @@ SERVING_CONFIG_ID = os.getenv("SERVING_CONFIG_ID", "default_serving_config")
 
 # --- FastMCP Server Setup ---
 mcp = FastMCP(
-    "Vertex AI Search for Retail API")
+    "MCP for Vertex AI search for commerce formlely Retail API")
 
 @mcp.tool
 def search_products(
@@ -47,7 +47,7 @@ def search_products(
   """
   Searches the product catalog for a given query and returns product details.
   """
-  # 5. FIX: Lazy Initialization.
+  # 5 Lazy Initialization
   search_client = retail_v2.SearchServiceClient()
   product_client = retail_v2.ProductServiceClient()
 
@@ -92,6 +92,6 @@ def search_products(
 
 if __name__ == "__main__":
   # 7 Default to Stdio.
-  # Do NOT use transport="http" or port=8080.
+  # Not using transport="http".
   # When the ADK launches this script, it expects to talk via stdin/stdout.
   mcp.run()
