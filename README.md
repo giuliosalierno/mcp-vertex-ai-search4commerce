@@ -1,4 +1,4 @@
-# Vertex AI Search for Commerce
+# MCP Vertex AI Search for Commerce
 
 This project is a Model Context Protocol (MCP) server example that provides the [Vertex AI Search for Commerce](https://cloud.google.com/solutions/vertex-ai-search-commerce?hl=en) API from Google Cloud as a tool, using [FastMCP](https://github.com/fastmcp/fastmcp-py).
 
