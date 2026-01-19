@@ -44,10 +44,24 @@ def search_products(
     color_families: str = "", 
     category: str = "",        
     size: str = "",            
+    gender: str = "",          
+    min_price: float = None,   
+    max_price: float = None,   
     page_size: int = 5,
 ):
   """
   Searches the product catalog for a given query and returns product details.
+
+  Args:
+    query: The search term (e.g., "running shoes").
+    brand: Filter by brand name.
+    color_families: Filter by color.
+    category: Filter by product category.
+    size: Filter by size. ONLY use the raw value (e.g., "42", "M"). DO NOT include units or parenthetical text like "(EU size)".
+    gender: Filter by gender (e.g., "Hombre", "Mujer", "Unisex").
+    min_price: Minimum price filter.
+    max_price: Maximum price filter.
+    page_size: Number of results to return.
   """
   # 5 Lazy Initialization
   client_options = ClientOptions(quota_project_id=PROJECT_ID)
@@ -64,9 +78,14 @@ def search_products(
     if brand: filter_conditions.append(f'(brand: ANY("{brand}"))')
     if color_families: filter_conditions.append(f'(colorFamilies: ANY("{color_families}"))')
     if category: filter_conditions.append(f'(categories: ANY("{category}"))')
-    if size: filter_conditions.append(f'(sizes: ANY("{size}"))')
+    if size: filter_conditions.append(f'(attributes.sizes: ANY("{size.strip()}"))')
+    if gender: filter_conditions.append(f'(attributes.gender: ANY("{gender}"))')
+    
+    if min_price is not None: filter_conditions.append(f'(price >= {min_price})')
+    if max_price is not None: filter_conditions.append(f'(price <= {max_price})')
 
     filter_str = " AND ".join(filter_conditions) if filter_conditions else ""
+    logger.info(f"Searching with query: '{query}' and filter: '{filter_str}'")
 
     search_request = retail_v2.SearchRequest(
       placement=placement,
