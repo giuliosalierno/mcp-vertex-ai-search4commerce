@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from fastmcp import FastMCP
 from google.api_core.exceptions import InvalidArgument
 from google.cloud import retail_v2
+from google.api_core.client_options import ClientOptions
 
 # 1. 
 # Ensure .env is loaded from the script's actual directory
@@ -49,8 +50,9 @@ def search_products(
   Searches the product catalog for a given query and returns product details.
   """
   # 5 Lazy Initialization
-  search_client = retail_v2.SearchServiceClient()
-  product_client = retail_v2.ProductServiceClient()
+  client_options = ClientOptions(quota_project_id=PROJECT_ID)
+  search_client = retail_v2.SearchServiceClient(client_options=client_options)
+  product_client = retail_v2.ProductServiceClient(client_options=client_options)
 
   placement = (
     f"projects/{PROJECT_ID}/locations/{LOCATION}/"
